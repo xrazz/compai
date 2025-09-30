@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Light mode only - no dark mode support */
 :root {
   --background: #fcfcfc;
   --foreground: #212529;
@@ -7,6 +8,11 @@
   --muted: #6c757d;
   --border: #c7c7c7;
   --text: #333333;
+}
+
+/* Force light mode - override any system preferences */
+html {
+  color-scheme: light only;
 }
 
 @theme inline {
@@ -23,6 +29,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Ensure all elements use light mode colors */
+* {
+  color-scheme: light only;
 }
 
 /* Hide scrollbar but keep scroll functionality */

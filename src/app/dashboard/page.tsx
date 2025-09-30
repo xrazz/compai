@@ -274,6 +274,97 @@ const AddProjectDialog = memo(({ isOpen, onClose, onSave }: {
 
 AddProjectDialog.displayName = 'AddProjectDialog'
 
+// Compliance Document Dialog Component
+const ComplianceDocumentDialog = memo(({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  const handleDownloadPDF = () => {
+    // Mock PDF download
+    alert("PDF download initiated!")
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/20">
+      <div className="bg-background w-full max-w-2xl max-h-[90vh] rounded-xl border border-border">
+        {/* Header */}
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-medium text-foreground">Compliance Document</h2>
+              <p className="text-xs text-text mt-1">GDPR Compliance Report</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1 hover:bg-filler transition-colors rounded"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-4 space-y-4 max-h-[calc(90vh-200px)] overflow-y-auto">
+          <div className="space-y-3">
+            <p className="text-sm text-text">
+              This document outlines the compliance status for the General Data Protection Regulation (GDPR) 
+              implementation within your organization. GDPR is a comprehensive data protection law that came 
+              into effect on May 25, 2018, and applies to all organizations that process personal data of 
+              EU citizens, regardless of where the organization is located.
+            </p>
+            
+            <p className="text-sm text-text">
+              The regulation establishes strict guidelines for data collection, processing, storage, and 
+              deletion, with significant penalties for non-compliance. Organizations must implement 
+              appropriate technical and organizational measures to ensure data protection by design and 
+              by default.
+            </p>
+
+            <p className="text-sm text-text">
+              Key compliance requirements include obtaining explicit consent for data processing, 
+              implementing data minimization principles, ensuring data portability, and providing 
+              individuals with the right to be forgotten. Regular audits and assessments are 
+              essential to maintain ongoing compliance.
+            </p>
+
+            <p className="text-sm text-text">
+              Our compliance assessment covers data governance frameworks, privacy impact assessments, 
+              breach notification procedures, and the implementation of privacy-enhancing technologies. 
+              Regular training and awareness programs ensure that all staff members understand their 
+              responsibilities under GDPR.
+            </p>
+
+            <p className="text-sm text-text">
+              This report provides a comprehensive overview of your current compliance posture, 
+              identifies areas for improvement, and offers actionable recommendations to strengthen 
+              your data protection practices and ensure full GDPR compliance.
+            </p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="p-4 border-t border-border">
+          <div className="flex items-center justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 bg-filler text-text hover:bg-filler/80 transition-colors rounded-lg border border-border text-xs font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleDownloadPDF}
+              className="px-4 py-2 bg-foreground text-white hover:bg-foreground/90 transition-colors rounded-lg text-xs font-medium"
+            >
+              Download PDF
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+})
+
+ComplianceDocumentDialog.displayName = 'ComplianceDocumentDialog'
+
 export default function ComplianceDashboard() {
   const [projects, setProjects] = useState<Project[]>([])
   const [complianceStandards, setComplianceStandards] = useState<ComplianceStandard[]>([])
@@ -290,6 +381,7 @@ export default function ComplianceDashboard() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null)
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false)
   const [showAddProjectDialog, setShowAddProjectDialog] = useState(false)
+  const [showComplianceDocument, setShowComplianceDocument] = useState(false)
 
   // System categories for integration
 const systemCategories = {
@@ -1043,22 +1135,48 @@ const systemCategories = {
               </div>
 
             {/* Compliance Standards Section */}
-            <div className="mb-4">
-              <div className="mb-3">
-                <h2 className="text-base font-medium text-foreground">Standards</h2>
-                <p className="text-xs text-muted mt-1 md:hidden">← Swipe to see all columns</p>
+            <div className="mb-4 mt-8">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h2 className="text-base font-medium text-foreground">Standards</h2>
+                  <p className="text-xs text-muted mt-1 md:hidden">← Swipe to see all columns</p>
+                </div>
+                {selectedProject && (
+                  <button
+                    onClick={handleRunComplianceCheck}
+                    disabled={isRunningCheck}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium bg-foreground text-white hover:bg-foreground/90 disabled:bg-muted disabled:cursor-not-allowed transition-colors rounded-lg"
+                  >
+                    {isRunningCheck ? (
+                      <>
+                        <svg className="animate-spin -ml-1 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Running...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCcw className="w-4 h-4" />
+                        Run Check
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
               <div className="bg-filler rounded-lg border border-border overflow-hidden">
                 {/* Mobile scrollable container */}
                 <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
-                  <div className="min-w-[500px]">
+                  <div className="min-w-[600px]">
                     {/* Table Header */}
                     <div className="bg-filler/50 px-4 py-3 border-b border-border">
-                      <div className="grid grid-cols-4 gap-4 text-xs font-semibold text-muted">
+                      <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-muted">
                         <div>Name</div>
                         <div>Status</div>
                         <div>Score</div>
                         <div>Last Checked</div>
+                        <div>Compliant</div>
+                        <div>View Document</div>
                       </div>
                     </div>
                     
@@ -1066,7 +1184,7 @@ const systemCategories = {
                     <div className="divide-y divide-border">
                       {complianceStandards.map((standard) => (
                         <div key={standard.id} className="px-4 py-3 hover:bg-filler/30 transition-colors">
-                          <div className="grid grid-cols-4 gap-4 items-center">
+                          <div className="grid grid-cols-6 gap-4 items-center">
                             <div className="flex items-center gap-2">
                               <span className="text-sm">{standard.icon}</span>
                               <span className="text-sm font-normal text-text">{standard.name}</span>
@@ -1082,6 +1200,41 @@ const systemCategories = {
                             <div className="text-sm text-text">
                               {Math.floor(Math.random() * 7) + 1} days ago
                             </div>
+                            <div>
+                              <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full ${
+                                standard.status === 'compliant' 
+                                  ? 'text-green-700 bg-green-100 border border-green-200' 
+                                  : standard.status === 'non-compliant'
+                                  ? 'text-red-700 bg-red-100 border border-red-200'
+                                  : 'text-yellow-700 bg-yellow-100 border border-yellow-200'
+                              }`}>
+                                {standard.status === 'compliant' ? (
+                                  <>
+                                    <CheckCircle2 className="w-3 h-3" />
+                                    Compliant
+                                  </>
+                                ) : standard.status === 'non-compliant' ? (
+                                  <>
+                                    <XCircle className="w-3 h-3" />
+                                    Not Compliant
+                                  </>
+                                ) : (
+                                  <>
+                                    <Clock className="w-3 h-3" />
+                                    Pending
+                                  </>
+                                )}
+                              </span>
+                            </div>
+                            <div>
+                              <button 
+                                onClick={() => setShowComplianceDocument(true)}
+                                className="flex items-center gap-1 text-xs font-medium text-foreground hover:text-foreground/80 transition-all duration-200 hover:-translate-y-0.5"
+                              >
+                                <span>View Document</span>
+                                <ArrowUpRight className="w-3 h-3" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       ))}
@@ -1091,79 +1244,7 @@ const systemCategories = {
               </div>
             </div>
 
-            {/* Run Compliance Check Section */}
-            {selectedProject && (
-              <div className="text-center">
-                <button
-                  onClick={handleRunComplianceCheck}
-                  disabled={isRunningCheck}
-                  className="inline-flex items-center justify-center px-6 py-3 text-sm font-normal text-white bg-foreground hover:bg-foreground/90 disabled:bg-muted disabled:cursor-not-allowed transition-colors rounded-lg border border-border"
-                >
-                  {isRunningCheck ? (
-                    <>
-                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Analyzing...
-                    </>
-                  ) : (
-                    `Run Check for ${selectedProject.title}`
-                  )}
-                </button>
-              </div>
-            )}
 
-            {/* Compliance Report */}
-            {complianceReport && selectedProject && (
-              <div className="mt-4">
-                <h2 className="text-base font-medium text-foreground text-center mb-4">
-                  Report - {selectedProject.title}
-                </h2>
-                
-                <div className="bg-filler p-4 mb-4 rounded">
-                  <div className="text-center">
-                    <div className="text-3xl font-medium text-foreground mb-1">
-                      {complianceReport.overallScore}%
-                    </div>
-                    <p className="text-sm text-text">
-                      {complianceReport.totalViolations} violations
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  {complianceReport.standards.map((standard: any) => (
-                    <div
-                      key={standard.id}
-                      className={`p-3 bg-filler rounded ${
-                        standard.status === 'compliant'
-                          ? "border-l-4 border-foreground"
-                          : "border-l-4 border-muted"
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm">{standard.icon}</span>
-                          <h4 className="text-sm font-medium text-text">
-                              {standard.name}
-                            </h4>
-                        </div>
-                        <span
-                          className={`px-2 py-1 text-xs font-medium rounded ${
-                            standard.status === 'compliant'
-                              ? "bg-foreground text-white"
-                              : "bg-muted text-white"
-                          }`}
-                        >
-                          {standard.status === 'compliant' ? 'Compliant' : 'Needs Attention'}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-          )}
           </div>
         </div>
       </div>
@@ -1186,6 +1267,12 @@ const systemCategories = {
       <FeedbackDialog
         isOpen={showFeedbackDialog}
         onClose={() => setShowFeedbackDialog(false)}
+      />
+
+      {/* Compliance Document Dialog */}
+      <ComplianceDocumentDialog
+        isOpen={showComplianceDocument}
+        onClose={() => setShowComplianceDocument(false)}
       />
     </div>
   );
