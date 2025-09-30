@@ -954,7 +954,10 @@ const systemCategories = {
             {/* System Integration Section */}
             <div className="mb-4">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-medium text-foreground">Connect Systems</h2>
+                <div>
+                  <h2 className="text-base font-medium text-foreground">Connect Systems</h2>
+                  <p className="text-xs text-muted mt-1 md:hidden">← Swipe to see all systems</p>
+                </div>
                 <button className="px-3 py-2 text-sm font-normal bg-filler text-text hover:bg-filler/80 transition-colors rounded-lg border border-border">
                   + Create API key
                 </button>
@@ -990,87 +993,100 @@ const systemCategories = {
               </div>
               
               <div className="bg-filler rounded-lg border border-border overflow-hidden">
-                {/* Table Header */}
-                <div className="bg-filler/50 px-4 py-3 border-b border-border">
-                  <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-muted">
-                    {Object.keys(systemCategories).map((category) => (
-                      <div key={category}>{category}</div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Table Body */}
-                <div className="divide-y divide-border">
-                  {Array.from({ length: Math.max(...Object.values(systemCategories).map(systems => systems.length)) }).map((_, rowIndex) => (
-                    <div key={rowIndex} className="px-4 py-3">
-                      <div className="grid grid-cols-5 gap-4">
-                        {Object.values(systemCategories).map((systems, colIndex) => {
-                          const system = systems[rowIndex];
-                          return system ? (
-                            <button
-                              key={`${colIndex}-${rowIndex}`}
-                              onClick={() => handleSystemClick(system)}
-                              className="flex items-center justify-between hover:bg-filler/30 transition-colors text-left group p-2 rounded"
-                            >
-                              <div className="flex items-center space-x-2">
-                                <span className="text-sm">{getSystemIcon(system)}</span>
-                                <span className="text-xs font-medium capitalize text-text">
-                                  {system}
-                                </span>
-                              </div>
-                              <ArrowUpRight className="w-4 h-4 text-muted group-hover:-translate-y-0.5 transition-transform" />
-                            </button>
-                          ) : (
-                            <div key={`${colIndex}-${rowIndex}`} className="flex items-center space-x-2 p-2 text-muted">
-                              <Clock className="w-4 h-4" />
-                              <span className="text-xs">Coming soon...</span>
-                            </div>
-                          );
-                        })}
+                {/* Mobile scrollable container */}
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                  <div className="min-w-[600px]">
+                    {/* Table Header */}
+                    <div className="bg-filler/50 px-4 py-3 border-b border-border">
+                      <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-muted">
+                        {Object.keys(systemCategories).map((category) => (
+                          <div key={category}>{category}</div>
+                        ))}
                       </div>
                     </div>
-                  ))}
+                    
+                    {/* Table Body */}
+                    <div className="divide-y divide-border">
+                      {Array.from({ length: Math.max(...Object.values(systemCategories).map(systems => systems.length)) }).map((_, rowIndex) => (
+                        <div key={rowIndex} className="px-4 py-3">
+                          <div className="grid grid-cols-5 gap-4">
+                            {Object.values(systemCategories).map((systems, colIndex) => {
+                              const system = systems[rowIndex];
+                              return system ? (
+                                <button
+                                  key={`${colIndex}-${rowIndex}`}
+                                  onClick={() => handleSystemClick(system)}
+                                  className="flex items-center justify-between hover:bg-filler/30 transition-colors text-left group p-2 rounded"
+                                >
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-sm">{getSystemIcon(system)}</span>
+                                    <span className="text-xs font-medium capitalize text-text">
+                                      {system}
+                                    </span>
+                                  </div>
+                                  <ArrowUpRight className="w-4 h-4 text-muted group-hover:-translate-y-0.5 transition-transform" />
+                                </button>
+                              ) : (
+                                <div key={`${colIndex}-${rowIndex}`} className="flex items-center space-x-2 p-2 text-muted">
+                                  <Clock className="w-4 h-4" />
+                                  <span className="text-xs">Coming soon...</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
               </div>
 
             {/* Compliance Standards Section */}
             <div className="mb-4">
-              <h2 className="text-base font-medium text-foreground mb-3">Standards</h2>
+              <div className="mb-3">
+                <h2 className="text-base font-medium text-foreground">Standards</h2>
+                <p className="text-xs text-muted mt-1 md:hidden">← Swipe to see all columns</p>
+              </div>
               <div className="bg-filler rounded-lg border border-border overflow-hidden">
-                {/* Table Header */}
-                <div className="bg-filler/50 px-4 py-3 border-b border-border">
-                  <div className="grid grid-cols-4 gap-4 text-xs font-semibold text-muted">
-                    <div>Name</div>
-                    <div>Status</div>
-                    <div>Score</div>
-                    <div>Last Checked</div>
-                  </div>
-                </div>
-                
-                {/* Table Rows */}
-                <div className="divide-y divide-border">
-                  {complianceStandards.map((standard) => (
-                    <div key={standard.id} className="px-4 py-3 hover:bg-filler/30 transition-colors">
-                      <div className="grid grid-cols-4 gap-4 items-center">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">{standard.icon}</span>
-                          <span className="text-sm font-normal text-text">{standard.name}</span>
-                        </div>
-                        <div>
-                          <span className={`inline-flex px-2 py-1 text-xs font-normal rounded ${getComplianceStatusColor(standard.status)}`}>
-                            {standard.status}
-                          </span>
-                        </div>
-                        <div className="text-sm text-text">
-                          {Math.floor(Math.random() * 40) + 60}%
-                        </div>
-                        <div className="text-sm text-text">
-                          {Math.floor(Math.random() * 7) + 1} days ago
-                        </div>
+                {/* Mobile scrollable container */}
+                <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+                  <div className="min-w-[500px]">
+                    {/* Table Header */}
+                    <div className="bg-filler/50 px-4 py-3 border-b border-border">
+                      <div className="grid grid-cols-4 gap-4 text-xs font-semibold text-muted">
+                        <div>Name</div>
+                        <div>Status</div>
+                        <div>Score</div>
+                        <div>Last Checked</div>
                       </div>
                     </div>
-                  ))}
+                    
+                    {/* Table Rows */}
+                    <div className="divide-y divide-border">
+                      {complianceStandards.map((standard) => (
+                        <div key={standard.id} className="px-4 py-3 hover:bg-filler/30 transition-colors">
+                          <div className="grid grid-cols-4 gap-4 items-center">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm">{standard.icon}</span>
+                              <span className="text-sm font-normal text-text">{standard.name}</span>
+                            </div>
+                            <div>
+                              <span className={`inline-flex px-2 py-1 text-xs font-normal rounded ${getComplianceStatusColor(standard.status)}`}>
+                                {standard.status}
+                              </span>
+                            </div>
+                            <div className="text-sm text-text">
+                              {Math.floor(Math.random() * 40) + 60}%
+                            </div>
+                            <div className="text-sm text-text">
+                              {Math.floor(Math.random() * 7) + 1} days ago
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

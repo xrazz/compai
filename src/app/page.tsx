@@ -6,6 +6,26 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center font-inter">
       <div className="text-center max-w-2xl mx-auto px-4">
+        {/* Logo */}
+        <div className="w-16 h-16 mx-auto mb-4 rounded-lg overflow-hidden">
+          <img 
+            src="/logo.png" 
+            alt="Compliance AI"
+            className="w-16 h-16 rounded-lg"
+            onError={(e) => {
+              // Fallback to text if logo fails
+              e.currentTarget.style.display = 'none';
+              const fallback = e.currentTarget.nextElementSibling as HTMLElement;
+              if (fallback) {
+                fallback.style.display = 'flex';
+              }
+            }}
+          />
+          <div className="w-16 h-16 bg-foreground rounded-lg flex items-center justify-center" style={{display: 'none'}}>
+            <span className="text-white text-xl font-medium">C</span>
+          </div>
+        </div>
+        
         {/* Main Title */}
         <h1 className="text-2xl font-bold text-foreground mb-2">
           Compliance AI
