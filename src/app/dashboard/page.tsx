@@ -284,8 +284,14 @@ const ComplianceDocumentDialog = memo(({ isOpen, onClose }: { isOpen: boolean; o
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/20">
-      <div className="bg-background w-full max-w-2xl max-h-[90vh] rounded-xl border border-border">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-foreground/20"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-background w-full max-w-2xl max-h-[90vh] rounded-xl border border-border"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between">
@@ -303,7 +309,7 @@ const ComplianceDocumentDialog = memo(({ isOpen, onClose }: { isOpen: boolean; o
         </div>
 
         {/* Content */}
-        <div className="p-4 space-y-4 max-h-[calc(90vh-200px)] overflow-y-auto">
+        <div className="p-4 space-y-4 max-h-[calc(90vh-200px)] overflow-y-auto scrollbar-aesthetic">
           <div className="space-y-3">
             <p className="text-sm text-text">
               This document outlines the compliance status for the General Data Protection Regulation (GDPR) 
@@ -394,12 +400,12 @@ const systemCategories = {
 
   // Compliance standards
   const complianceStandardsData = [
-    { id: "gdpr", name: "GDPR", description: "General Data Protection Regulation", icon: <Shield className="w-4 h-4" /> },
-    { id: "hipaa", name: "HIPAA", description: "Health Insurance Portability and Accountability Act", icon: <Shield className="w-4 h-4" /> },
-    { id: "pci-dss", name: "PCI-DSS", description: "Payment Card Industry Data Security Standard", icon: <Shield className="w-4 h-4" /> },
-    { id: "soc2", name: "SOC 2", description: "Service Organization Control 2", icon: <Shield className="w-4 h-4" /> },
-    { id: "iso27001", name: "ISO 27001", description: "Information Security Management System", icon: <Shield className="w-4 h-4" /> },
-    { id: "nist", name: "NIST", description: "National Institute of Standards and Technology", icon: <Shield className="w-4 h-4" /> }
+    { id: "gdpr", name: "GDPR", description: "General Data Protection Regulation", icon: <img src="/doc.svg" alt="GDPR" className="w-4 h-4" /> },
+    { id: "hipaa", name: "HIPAA", description: "Health Insurance Portability and Accountability Act", icon: <img src="/doc.svg" alt="HIPAA" className="w-4 h-4" /> },
+    { id: "pci-dss", name: "PCI-DSS", description: "Payment Card Industry Data Security Standard", icon: <img src="/doc.svg" alt="PCI-DSS" className="w-4 h-4" /> },
+    { id: "soc2", name: "SOC 2", description: "Service Organization Control 2", icon: <img src="/doc.svg" alt="SOC 2" className="w-4 h-4" /> },
+    { id: "iso27001", name: "ISO 27001", description: "Information Security Management System", icon: <img src="/doc.svg" alt="ISO 27001" className="w-4 h-4" /> },
+    { id: "nist", name: "NIST", description: "National Institute of Standards and Technology", icon: <img src="/doc.svg" alt="NIST" className="w-4 h-4" /> }
   ];
 
   // Mock user data
