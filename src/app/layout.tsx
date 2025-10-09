@@ -1,16 +1,13 @@
-import type { Metadata } from "next";
+"use client";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
 });
-
-export const metadata: Metadata = {
-  title: "Compliance AI Dashboard",
-  description: "Automate compliance monitoring, proof gathering, and reporting across your entire infrastructure",
-};
 
 export default function RootLayout({
   children,
@@ -22,7 +19,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-inter antialiased`}
       >
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

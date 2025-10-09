@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Eye, EyeOff, ArrowRight, Mail, Lock } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,28 +13,38 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [error, setError] = useState("");
+  
+  const { signIn, signInWithGoogle } = useAuth();
+  const router = useRouter();
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
     
-    // Mock login process
-    setTimeout(() => {
+    try {
+      await signIn(email, password);
+      router.push('/dashboard');
+    } catch (error: any) {
+      setError(error.message || "Failed to sign in. Please check your credentials.");
+    } finally {
       setIsLoading(false);
-      // Redirect to dashboard
-      window.location.href = '/dashboard';
-    }, 1500);
+    }
   };
 
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
+    setError("");
     
-    // Mock Google login process
-    setTimeout(() => {
+    try {
+      await signInWithGoogle();
+      router.push('/dashboard');
+    } catch (error: any) {
+      setError(error.message || "Failed to sign in with Google.");
+    } finally {
       setIsGoogleLoading(false);
-      // Redirect to dashboard
-      window.location.href = '/dashboard';
-    }, 1500);
+    }
   };
 
   return (
@@ -145,6 +157,13 @@ export default function LoginPage() {
               )}
             </button>
           </form>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
 
           {/* Divider */}
           <div className="my-6">

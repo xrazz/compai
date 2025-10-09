@@ -21,6 +21,9 @@ import {
 } from "lucide-react"
 import { useState, useEffect, useCallback, useRef, memo } from "react"
 import Link from "next/link"
+import { useAuth } from "@/contexts/AuthContext"
+import { useRouter } from "next/navigation"
+import ProtectedRoute from "@/components/ProtectedRoute"
 
 // Types
 interface Project {
@@ -389,6 +392,18 @@ export default function ComplianceDashboard() {
   const [showAddProjectDialog, setShowAddProjectDialog] = useState(false)
   const [showComplianceDocument, setShowComplianceDocument] = useState(false)
 
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/login');
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    }
+  };
+
   // System categories for integration
 const systemCategories = {
   "Cloud Providers": ["aws", "gcp", "azure"],
@@ -407,14 +422,6 @@ const systemCategories = {
     { id: "iso27001", name: "ISO 27001", description: "Information Security Management System", icon: <img src="/doc.svg" alt="ISO 27001" className="w-4 h-4" /> },
     { id: "nist", name: "NIST", description: "National Institute of Standards and Technology", icon: <img src="/doc.svg" alt="NIST" className="w-4 h-4" /> }
   ];
-
-  // Mock user data
-  const user = {
-    uid: "mock-user-id",
-    displayName: "John Doe",
-    email: "john@example.com",
-    photoURL: null
-  }
 
   // Local storage functions
   const saveProjectsToStorage = (projects: Project[]) => {
@@ -768,6 +775,7 @@ const systemCategories = {
   }
 
   return (
+    <ProtectedRoute>
     <div className="flex h-screen font-inter bg-background overflow-hidden">
       {/* Sidebar Overlay */}
       {sidebarOpen && (
@@ -870,7 +878,7 @@ const systemCategories = {
                   className="w-full flex items-center justify-between p-2 text-left hover:bg-filler/30 transition-colors rounded-xl"
                 >
                   <div className="flex items-center gap-3 overflow-hidden">
-                    {user.photoURL ? (
+                    {user?.photoURL ? (
                       <img
                         src={user.photoURL}
                         alt="Profile"
@@ -883,7 +891,7 @@ const systemCategories = {
                     )}
                     <div className="overflow-hidden">
                       <p className="text-sm font-normal text-text truncate">
-                        {user.displayName || 'User'}
+                        {user?.displayName || 'User'}
                       </p>
                     </div>
                   </div>
@@ -893,10 +901,10 @@ const systemCategories = {
                   <div className="px-2 pb-2 space-y-0.5">
                     <div className="px-2 pt-2 flex items-center gap-2">
                       <p className="text-xs font-medium text-text truncate flex-1">
-                        {user.email}
+                        {user?.email || ''}
                       </p>
                       <button
-                        onClick={() => copyToClipboard(user.email)}
+                        onClick={() => copyToClipboard(user?.email || '')}
                         className="p-1 hover:bg-filler transition-colors rounded"
                         title="Copy email"
                       >
@@ -907,7 +915,10 @@ const systemCategories = {
                         )}
                       </button>
                     </div>
-                    <button className="w-full flex items-center gap-3 p-2 text-left text-sm text-text hover:bg-red-50 hover:text-red-600 transition-colors rounded-xl">
+                    <button 
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-3 p-2 text-left text-sm text-text hover:bg-red-50 hover:text-red-600 transition-colors rounded-xl"
+                    >
                       <LogOut className="w-4 h-4" />
                       <span>Log Out</span>
                     </button>
@@ -1281,5 +1292,6 @@ const systemCategories = {
         onClose={() => setShowComplianceDocument(false)}
       />
     </div>
+    </ProtectedRoute>
   );
 }

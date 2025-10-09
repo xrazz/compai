@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Eye, EyeOff, ArrowRight, Mail, Lock, User, Check } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -16,6 +18,10 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [error, setError] = useState("");
+  
+  const { signUp, signInWithGoogle } = useAuth();
+  const router = useRouter();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -26,36 +32,42 @@ export default function SignupPage() {
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
     
     if (!agreedToTerms) {
-      alert("Please agree to the Terms of Service and Privacy Policy");
+      setError("Please agree to the Terms of Service and Privacy Policy");
       return;
     }
     
     setIsLoading(true);
     
-    // Mock signup process
-    setTimeout(() => {
+    try {
+      await signUp(formData.email, formData.password, formData.name);
+      router.push('/dashboard');
+    } catch (error: any) {
+      setError(error.message || "Failed to create account. Please try again.");
+    } finally {
       setIsLoading(false);
-      // Redirect to dashboard
-      window.location.href = '/dashboard';
-    }, 1500);
+    }
   };
 
   const handleGoogleSignup = async () => {
     setIsGoogleLoading(true);
+    setError("");
     
-    // Mock Google signup process
-    setTimeout(() => {
+    try {
+      await signInWithGoogle();
+      router.push('/dashboard');
+    } catch (error: any) {
+      setError(error.message || "Failed to sign up with Google.");
+    } finally {
       setIsGoogleLoading(false);
-      // Redirect to dashboard
-      window.location.href = '/dashboard';
-    }, 1500);
+    }
   };
 
   return (
@@ -234,6 +246,13 @@ export default function SignupPage() {
               )}
             </button>
           </form>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          )}
 
           {/* Divider */}
           <div className="my-6">
